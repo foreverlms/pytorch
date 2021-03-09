@@ -2308,6 +2308,8 @@ class DistributedDataParallelTest(MultiProcessTestCase):
                 global_batch_size,
                 gradient_as_bucket_view,
             )
+            ddp_logging_data = ddp_model.get_ddp_logging_data()
+            self.assertEqual(ddp_logging_data.is_multi_device_module, True)
         else:
             model, ddp_model, input, target = self._prepare_single_device_module(
                 process_group,
@@ -2316,6 +2318,8 @@ class DistributedDataParallelTest(MultiProcessTestCase):
                 global_batch_size,
                 gradient_as_bucket_view,
             )
+            ddp_logging_data = ddp_model.get_ddp_logging_data()
+            self.assertEqual(ddp_logging_data.is_multi_device_module, False)
 
         def step_model(model, input, target):
             model.train()

@@ -130,6 +130,11 @@ ${assign_return_values} ([&]() {
 })();
 """)
 
+THROW_IF_VARIABLETYPE_ON = """
+TORCH_CHECK(c10::impl::tls_is_dispatch_keyset_excluded(c10::autograd_dispatch_keyset),
+  "Cannot handle Inference Tensor outside InferenceMode");
+"""
+
 TMP_VAR = 'tmp'
 
 # FIXME: Ideally these functions should be methods on Type class, but we have a
@@ -327,7 +332,18 @@ def emit_inplace_or_view_body(fn: NativeFunctionWithDifferentiabilityInfo) -> Li
         api_name = sig_group.faithful_signature.name()
     else:
         api_name = sig_group.signature.name()
-    # inplace_view_body.append(THROW_IF_VARIABLETYPE_ON)
+    # Throws if a InplaceOrView kernel is hit without Autograd being disabled.
+    # There're two valid cases calling InplaceOrView:
+    #  - redispatch from VariableType kernel (AutoNonVariableTypeMode is on)
+    #  - In inference mode where Autograd keys are excluded as well.
+    # If InplaceOrView is hit without Autograd keys being disabled, e.g. apply
+    # inplace/view op on inference tensor outside inference mode
+    # If we want to properly support these cases, we need to setup
+    # InplaceOrView kernel to make sure the output is inference tensor as well (since
+    # their base tensor doesn't have complete information about view/version).
+    # This is possible to do, but we currently don't see such use cases so
+    # simply throwing errors here.
+    inplace_view_body.append(THROW_IF_VARIABLETYPE_ON)
     if modifies_arguments(f):  # inplace op
         inplace_view_body.append(INPLACE_REDISPATCH.substitute(
             api_name=api_name,

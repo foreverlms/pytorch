@@ -20,7 +20,7 @@ struct TORCH_API MPSHooksInterface {
   // this fails the implementation if MPSHooks functions are called, but
   // MPS backend is not present.
   #define FAIL_MPSHOOKS_FUNC(func) \
-    TORCH_CHECK(false, "Cannot execute ", func ,"() without MPS backend.");
+    TORCH_CHECK(false, "Cannot execute ", func, "() without MPS backend.");
 
   virtual ~MPSHooksInterface() = default;
 
@@ -64,16 +64,35 @@ struct TORCH_API MPSHooksInterface {
   virtual void setMemoryFraction(double /*ratio*/) const {
     FAIL_MPSHOOKS_FUNC(__func__);
   }
-
   virtual void profilerStartTrace(const std::string& mode, bool waitUntilCompleted) const {
     FAIL_MPSHOOKS_FUNC(__func__);
   }
-
   virtual void profilerStopTrace() const {
     FAIL_MPSHOOKS_FUNC(__func__);
   }
+  virtual id_t acquireEvent(bool enable_timing) const {
+    FAIL_MPSHOOKS_FUNC(__func__);
+  }
+  virtual void releaseEvent(id_t event_id) const {
+    FAIL_MPSHOOKS_FUNC(__func__);
+  }
+  virtual void recordEvent(id_t event_id) const {
+    FAIL_MPSHOOKS_FUNC(__func__);
+  }
+  virtual void waitForEvent(id_t event_id) const {
+    FAIL_MPSHOOKS_FUNC(__func__);
+  }
+  virtual void synchronizeEvent(id_t event_id) const {
+    FAIL_MPSHOOKS_FUNC(__func__);
+  }
+  virtual bool queryEvent(id_t event_id) const {
+    FAIL_MPSHOOKS_FUNC(__func__);
+  }
+  virtual double elapsedTimeOfEvents(id_t start_event_id, id_t end_event_id) const {
+    FAIL_MPSHOOKS_FUNC(__func__);
+  }
 
-    #undef FAIL_MPSHOOKS_FUNC
+  #undef FAIL_MPSHOOKS_FUNC
 };
 
 struct TORCH_API MPSHooksArgs {};

@@ -105,7 +105,7 @@ static PyObject* MPSModule_currentAllocatedMemory(
     PyObject* _unused,
     PyObject* noargs) {
   HANDLE_TH_ERRORS
-  return PyLong_FromUnsignedLongLong(
+  return THPUtils_packUInt64(
       at::detail::getMPSHooks().getCurrentAllocatedMemory());
   END_HANDLE_TH_ERRORS
 }
@@ -114,7 +114,7 @@ static PyObject* MPSModule_driverAllocatedMemory(
     PyObject* _unused,
     PyObject* noargs) {
   HANDLE_TH_ERRORS
-  return PyLong_FromUnsignedLongLong(
+  return THPUtils_packUInt64(
       at::detail::getMPSHooks().getDriverAllocatedMemory());
   END_HANDLE_TH_ERRORS
 }
@@ -149,7 +149,7 @@ static PyObject* MPSModule_profilerStopTrace(
 static PyObject* MPSModule_acquireEvent(PyObject* _unused, PyObject* args) {
   HANDLE_TH_ERRORS
   const bool enable_timing = THPUtils_unpackBool(args);
-  return PyLong_FromUnsignedLong(
+  return THPUtils_packUInt32(
       at::detail::getMPSHooks().acquireEvent(enable_timing));
   END_HANDLE_TH_ERRORS
 }
